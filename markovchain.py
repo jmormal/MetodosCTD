@@ -226,3 +226,4 @@ class MarkovChain:
         if img_path:
             plt.savefig(img_path)
         plt.show()
+        return fig
