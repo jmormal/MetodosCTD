@@ -183,7 +183,7 @@ class MarkovChain:
         x_prob = x_start +  0.2*dx + 1.2 * x_offset
         y_prob = y_start +  0.2*dy + 1.2 * y_offset
         if prob and annotate:
-            text = f"{prob*100 if self.percentages else prob:.1f}".rstrip("0").rstrip(".")
+            text = f"{prob*100 if self.percentages else prob:.2f}".rstrip("0").rstrip(".")
             text += "%" if self.percentages else ""
             ax.annotate(text, xy=(x_prob, y_prob), color='#000000', **self.text_args)
 
