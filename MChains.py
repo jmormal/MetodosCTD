@@ -7,6 +7,7 @@ class MarkovChain():
     def __init__(self, MC, names) -> None:
         self.MC = np.array(MC)
         self.names = names
+        
 
     def get_graph(self):
         mc = drwMarkovChain(self.MC, self.names)
@@ -123,7 +124,27 @@ class MarkovChain():
 
 
 
+    def check_ergodicity(self):
+        # Find Pt-I and check if it is ergodic
+        A = np.transpose(self.MC) - np.eye(self.MC.shape[0])
+        print(A)
+        print(np.linalg.matrix_rank(A))
+        if np.linalg.matrix_rank(A) == self.MC.shape[0]:
+            print("Ergodic")
+        else:
+            print("Not Ergodic")
 
+    def check_if_probabilities(self):
+        for i in range(self.MC.shape[0]):
+            for j in range(self.MC.shape[0]):
+                if self.MC[i,j] < 0 or self.MC[i,j] > 1:
+                    return False
+                
+        # Check sum of rows
+        for i in range(self.MC.shape[0]):
+            if np.sum(self.MC[i]) > 1+0.0001 or np.sum(self.MC[i]) < 1-0.0001:
+                return False
+        return True
         
 
     

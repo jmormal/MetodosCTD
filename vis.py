@@ -3,6 +3,7 @@ from IPython.display import display, clear_output
 import numpy as np
 import pandas as pd
 from MChains import MarkovChain
+import ipywidgets as widgets
 # module from this repository
 
 
@@ -16,19 +17,51 @@ states_input = widgets.IntText(
 )
 
 
+# Update State Names
+update_states_name_button = widgets.Button(description="Update State Names")
+
+# Function to handle the button click event
+def on_update_states_name_button_clicked(b):
+    global matrix_input
+
+    matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
+    state_names = [child for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+    # get unique state names
+    state_names1 =  state_names[:len(state_names)//2]
+    # chage rest of the state names
+    for i in range(len(state_names1)):
+        state_names[i + len(state_names1)].value = state_names[i].value 
+
+
+update_states_name_button.on_click(on_update_states_name_button_clicked)
+
+# Set Matrix to 0
+set_matrix_to_zero_button = widgets.Button(description="Set Matrix to 0")
+
+# Function to handle the button click event
+def on_set_matrix_to_zero_button_clicked(b):
+    global matrix_input
+
+    matrix_values = [child for child in matrix_input.children if isinstance(child, widgets.FloatText)]
+    for i in range(len(matrix_values)):
+        matrix_values[i].value = 0
+
+set_matrix_to_zero_button.on_click(on_set_matrix_to_zero_button_clicked)
+
 
 
 # Function to create an n*n matrix input widget with state name inputs in both row and column
 def create_matrix_input(n):
     matrix_children = [widgets.Text(value='', disabled=True)]  # Empty top-left corner cell
     # Top row state names
+    a=[widgets.Text(value=f'State {i+1}', layout=widgets.Layout(width='auto')) for i in range(n)]
     matrix_children.extend([widgets.Text(value=f'State {i+1}', layout=widgets.Layout(width='auto')) for i in range(n)])
 
     for i in range(n):
         # Left column state names
         matrix_children.append(widgets.Text(value=f'State {i+1}', layout=widgets.Layout(width='auto')))
-        # Row for transition matrix # let the step be 0.1
-        matrix_children.extend([widgets.FloatText(value=1/n, step=0.1,  layout=widgets.Layout(width='auto')) for _ in range(n)])
+        # Row for transition matrix
+        matrix_children.extend([widgets.FloatText(value=1/n, step=0.1, layout=widgets.Layout(width='auto')) for _ in range(n)])
 
     matrix_input = widgets.GridBox(
         children=matrix_children,
@@ -111,7 +144,10 @@ def on_draw_button_clicked(b):
         transition_matrix = np.array(matrix_values).reshape(n, n)
         try:
             M = MarkovChain(transition_matrix, state_names)
-            M.get_graph()
+            if M.check_if_probabilities():
+                M.get_graph()
+            else:
+                display("Error: Not a valid transition matrix")
         except Exception as e:
             display(f"Error: {e}")
 n = states_input.value
@@ -299,6 +335,37 @@ def on_solve_estimated_prob_button_clicked(b):
     except Exception as e:
         print(f"Error: {e}")
         
+
+
+#f_ij_n_button = widgets.Button(description="Calculate f_{i j}^{(n)}", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+# Lets render f_{i j}^{(n)} so it shows the symbols and not the sintax
+
+import markdown # pip install markdown
+from bs4 import BeautifulSoup # pip install beautifulsoup4
+
+def md_to_text(md):
+    html = markdown.markdown(md)
+    soup = BeautifulSoup(html, features='html.parser')
+    return soup.get_text()
+
+print("hello")
+f_ij_n_button = widgets.Button(description=md_to_text("Calculate $f_{i j}^{(n)}$"), layout=widgets.Layout(flex='1 1 0%', width='auto'))
+
+from IPython.display import display, HTML, clear_output
+
+# Create a button with HTML content to render LaTeX using MathJax
+button_x2 = widgets.HTML(
+    value="<button style='height:40px; width:100px'><math xmlns='http://www.w3.org/1998/Math/MathML'><msup><mi>x</mi><mn>2</mn></msup></math></button>"
+)
+# Handle the click event
+def on_button_x2_clicked(b):
+    with output:
+        clear_output()
+        display(HTML("<h1>Button clicked.</h1>"))
+
+# Attach the function to the button. Remember that button_x2 is an HTML widget
+button_x2.on_click(on_button_x2_clicked)
+
 calc_button.on_click(on_calc_button_clicked)
 draw_button.on_click(on_draw_button_clicked)
 draw_prob_button.on_click(on_draw_prob_button_clicked)
@@ -309,5 +376,5 @@ calc_first_time_prob_button.on_click(on_calc_first_time_prob_button_clicked)
 estimate_and_draw_first_time_prob_button.on_click(on_estimate_and_draw_first_time_prob_button_clicked)
 solve_estimated_prob_button.on_click(on_solve_estimated_prob_button_clicked)
 # Layout the widgets
-matrix_widget = widgets.VBox([box_0, states_input, matrix_input,   output])
+matrix_widget = widgets.VBox([box_0, button_x2,  f_ij_n_button, states_input, update_states_name_button,set_matrix_to_zero_button, matrix_input,   output])
 display(matrix_widget)
