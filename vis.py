@@ -132,7 +132,7 @@ def on_calc_button_clicked(b):
             display(f"Steady States: {sol}")
             return sol
         except Exception as e:
-            display(f"Error: {e}")
+            display(f"Error: {e}") 
 
 def on_draw_button_clicked(b):
     with output:
