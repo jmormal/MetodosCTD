@@ -93,20 +93,21 @@ states_input.observe(update_matrix_input, names='value')
 # Buttons
 
 # Button to find the steady state probabilities
-calc_button = widgets.Button(description="Calculate Steady States", layout=widgets.Layout(flex='1 1 0%', width='auto'),)
+calc_button = widgets.Button(description="Calculate Steady States Probabilities", layout=widgets.Layout(flex='1 1 0%', width='auto'),)
 draw_button = widgets.Button(description="Draw Graph", layout=widgets.Layout(flex='1 1 0%', width='auto'))
-draw_prob_button = widgets.Button(description="Calculate probabilitye \n fsd", layout=widgets.Layout(flex='1 1 0%', width='auto'))
-calc_first_time_prob_button = widgets.Button(description="Calculate first time probabilities", layout=widgets.Layout(flex='1 1 0%', width='auto'))
-estimate_and_draw_first_time_prob_button = widgets.Button(description="Estimate and draw    \n first time probabilities", layout=widgets.Layout(flex='1 1 0%', width='auto'))
-
-
+draw_prob_button = widgets.Button(description="Probability first-passage time from state i to state j ", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+calc_first_time_mean_button = widgets.Button(description="Estimated first time passage", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+estimate_and_draw_first_time_prob_button = widgets.Button(description="Estimate and draw  first time probabilities", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+estimate_and_draw_first_time_mean_button = widgets.Button(description="Estimate and draw  first time mean", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+calc_matrix_power_button = widgets.Button(description="Calculate Matrix Power", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+classify_button = widgets.Button(description="Classify the Markov Chain", layout=widgets.Layout(flex='1 1 0%', width='auto'))
 
 # Button to find the probability of going from state i to state j in n steps 
 solve_prob_button = widgets.Button(description="Solve", layout=widgets.Layout(flex='1 1 0%', width='auto'))
 solve_estimated_prob_button = widgets.Button(description="Solve", layout=widgets.Layout(flex='1 1 0%', width='auto'))
 solve_estimate_and_draw_button = widgets.Button(description="Solve", layout=widgets.Layout(flex='1 1 0%', width='auto'))
-
-
+solve_estimated_mean_button = widgets.Button(description="Solve", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+solve_matrix_power_button = widgets.Button(description="Solve", layout=widgets.Layout(flex='1 1 0%', width='auto'))
 
 
 # Output widget
@@ -190,7 +191,7 @@ def on_draw_prob_button_clicked(b):
 
     # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, draw_prob_button, i_input, j_input, n_input,solve_prob_button, output]
 
-    matrix_widget.children= [box_0, states_input, matrix_input, i_input, j_input, n_input,solve_prob_button, output]
+    matrix_widget.children= [box_0, box_1, matrix_input, i_input, j_input, n_input,solve_prob_button, output]
 
 
 
@@ -211,7 +212,8 @@ def solve_prob_button_clicked(b):
             # Get the index of the state names
             i = state_names.index(i_input.value)
             j = state_names.index(j_input.value)
-            display(M.get_probability_first_time_passage_n_steps(n_input.value,i,j))
+            # display(M.get_probability_first_time_passage_n_steps(n_input.value,i,j))
+            display(f"The probability of going from state {i_input.value} to state {j_input.value} in {n_input.value} steps is {M.get_probability_first_time_passage_n_steps(n_input.value,i,j)}")
     except Exception as e:
         print(f"Error: {e}")
 
@@ -222,10 +224,11 @@ box_layout = widgets.Layout(display='flex',
 
 
 
-items_0 = [calc_button,draw_button,  draw_prob_button, calc_first_time_prob_button , estimate_and_draw_first_time_prob_button , solve_estimated_prob_button]
+items_0 = [calc_button,draw_button,  draw_prob_button, calc_first_time_mean_button , estimate_and_draw_first_time_prob_button , solve_estimated_prob_button]
 # change height of the buttons to 'auto' to let the button grow vertically
 for item in items_0:
     item.layout.height = 'auto'
+
 
     
 for item in items_0:
@@ -248,14 +251,88 @@ for item in items_0:
     item.layout.flex_flow = 'row'
     item.layout.flex_wrap = 'wrap'
     
+items_calc = [calc_button,draw_button,  draw_prob_button, calc_first_time_mean_button , calc_matrix_power_button]
+
+for item in items_calc:
+    item.style.button_color = 'lightblue'
+    item.style.font_weight = 'bold'
+    item.style.font_size = 'large'
+    item.style.color = 'black'
+    item.style.border_color = 'black'
+    item.style.border_width = '1px'
+    item.style.border_radius = '5px'
+    item.style.padding = '10px'
+    item.style.margin = '10px'
+    item.layout.width = 'auto'
+    item.layout.height = 'auto'
+    item.layout.flex = '1 1 0%'
+    item.layout.align_items = 'stretch'
+    item.layout.justify_content = 'center'
+    item.layout.align_content = 'center'
+    item.layout.display = 'flex'
+    item.layout.flex_flow = 'row'
+    item.layout.flex_wrap = 'wrap'
+    
+
+box_calc = widgets.Box(children=items_calc, layout=box_layout)
 
 
+items_estimate = [estimate_and_draw_first_time_prob_button , solve_estimated_prob_button]
+
+for item in items_estimate:
+    item.style.button_color = 'lightblue'
+    item.style.font_weight = 'bold'
+    item.style.font_size = 'large'
+    item.style.color = 'black'
+    item.style.border_color = 'black'
+    item.style.border_width = '1px'
+    item.style.border_radius = '5px'
+    item.style.padding = '10px'
+    item.style.margin = '10px'
+    item.layout.width = 'auto'
+    item.layout.height = 'auto'
+    item.layout.flex = '1 1 0%'
+    item.layout.align_items = 'stretch'
+    item.layout.justify_content = 'center'
+    item.layout.align_content = 'center'
+    item.layout.display = 'flex'
+    item.layout.flex_flow = 'row'
+    item.layout.flex_wrap = 'wrap'
+
+box_estimate = widgets.Box(children=items_estimate, layout=box_layout)
+
+items_2 = [classify_button, draw_button]
+
+
+for item in items_2:
+    item.style.button_color = 'lightblue'
+    item.style.font_weight = 'bold'
+    item.style.font_size = 'large'
+    item.style.color = 'black'
+    item.style.border_color = 'black'
+    item.style.border_width = '1px'
+    item.style.border_radius = '5px'
+    item.style.padding = '10px'
+    item.style.margin = '10px'
+    item.layout.width = 'auto'
+    item.layout.height = 'auto'
+    item.layout.flex = '1 1 0%'
+    item.layout.align_items = 'stretch'
+    item.layout.justify_content = 'center'
+    item.layout.align_content = 'center'
+    item.layout.display = 'flex'
+    item.layout.flex_flow = 'row'
+    item.layout.flex_wrap = 'wrap'
+
+box_2 = widgets.Box(children=items_2, layout=box_layout)
 
 box_0 = widgets.Box(children=items_0, layout=box_layout)
 
+items_1=[states_input, update_states_name_button,set_matrix_to_zero_button]
+box_1 = widgets.Box(children=items_1, layout=box_layout)
 
 # Function to handle the button click event for calculating first time probabilities
-def on_calc_first_time_prob_button_clicked(b):
+def on_calc_first_time_mean_button_clicked(b):
     try:
         with output:
             clear_output()
@@ -291,7 +368,7 @@ def solve_estimate_and_draw_first_time_prob_button_clicked(b):
             # Get the index of the state names
             i = state_names.index(i_input.value)
             j = state_names.index(j_input.value)
-            M.draw_probability_distribution_first_time_n_simulation(i,j,n_input.value)
+            M.estimate_probability_first_time_passage_n_steps(i,j,n_input.value)
     except Exception as e:
         print(f"Error: {e}")
 
@@ -311,7 +388,7 @@ def on_estimate_and_draw_first_time_prob_button_clicked(b):
 
     # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, draw_prob_button, i_input, j_input, n_input,solve_prob_button, output]
 
-    matrix_widget.children= [box_0, states_input, matrix_input, i_input, j_input, n_input, solve_estimate_and_draw_button, output]
+    matrix_widget.children= [box_0, box_1, matrix_input, i_input, j_input, n_input, solve_estimate_and_draw_button, output]
 
 
 # Function to handle the button click event for solving estimated probabilities
@@ -331,40 +408,12 @@ def on_solve_estimated_prob_button_clicked(b):
             i = state_names.index(i_input.value)
             
             j = state_names.index(j_input.value)
-            M.solve_estimated_probabilities(n_input.value,i,j)
+            display(M.estimate_probability_first_time_passage_n_steps(n_input.value,i,j))
     except Exception as e:
         print(f"Error: {e}")
         
 
 
-#f_ij_n_button = widgets.Button(description="Calculate f_{i j}^{(n)}", layout=widgets.Layout(flex='1 1 0%', width='auto'))
-# Lets render f_{i j}^{(n)} so it shows the symbols and not the sintax
-
-import markdown # pip install markdown
-from bs4 import BeautifulSoup # pip install beautifulsoup4
-
-def md_to_text(md):
-    html = markdown.markdown(md)
-    soup = BeautifulSoup(html, features='html.parser')
-    return soup.get_text()
-
-print("hello")
-f_ij_n_button = widgets.Button(description=md_to_text("Calculate $f_{i j}^{(n)}$"), layout=widgets.Layout(flex='1 1 0%', width='auto'))
-
-from IPython.display import display, HTML, clear_output
-
-# Create a button with HTML content to render LaTeX using MathJax
-button_x2 = widgets.HTML(
-    value="<button style='height:40px; width:100px'><math xmlns='http://www.w3.org/1998/Math/MathML'><msup><mi>x</mi><mn>2</mn></msup></math></button>"
-)
-# Handle the click event
-def on_button_x2_clicked(b):
-    with output:
-        clear_output()
-        display(HTML("<h1>Button clicked.</h1>"))
-
-# Attach the function to the button. Remember that button_x2 is an HTML widget
-button_x2.on_click(on_button_x2_clicked)
 
 calc_button.on_click(on_calc_button_clicked)
 draw_button.on_click(on_draw_button_clicked)
@@ -372,9 +421,9 @@ draw_prob_button.on_click(on_draw_prob_button_clicked)
 solve_prob_button.on_click(solve_prob_button_clicked)
 solve_estimate_and_draw_button.on_click(solve_estimate_and_draw_first_time_prob_button_clicked)
 # Attach the functions to the buttons
-calc_first_time_prob_button.on_click(on_calc_first_time_prob_button_clicked)
+calc_first_time_mean_button.on_click(on_calc_first_time_mean_button_clicked)
 estimate_and_draw_first_time_prob_button.on_click(on_estimate_and_draw_first_time_prob_button_clicked)
 solve_estimated_prob_button.on_click(on_solve_estimated_prob_button_clicked)
 # Layout the widgets
-matrix_widget = widgets.VBox([box_0, button_x2,  f_ij_n_button, states_input, update_states_name_button,set_matrix_to_zero_button, matrix_input,   output])
+matrix_widget = widgets.VBox([box_2, box_calc, box_estimate,  box_1, matrix_input,   output])
 display(matrix_widget)

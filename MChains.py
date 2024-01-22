@@ -23,8 +23,6 @@ class MarkovChain():
     def check_reducibility(self):
         # Find Pt-I and check if it is irreducible
         A = np.transpose(self.MC) - np.eye(self.MC.shape[0])
-        print(A)
-        print(np.linalg.matrix_rank(A))
         if np.linalg.matrix_rank(A) == self.MC.shape[0]:
             print("Irreducible")
         else:
@@ -61,9 +59,9 @@ class MarkovChain():
             if n1 == 1:
                 f.append(self.MC[i,j])
             else:
+                f.append(self.get_transition_matrix_n_steps(n1)[i,j]
+                          - np.sum([f[k-1]*self.get_transition_matrix_n_steps(n1 - k)[j,j] for k in range(1,n1)]))
 
-                f.append(self.get_transition_matrix_n_steps(n1)[i,j] - np.sum([f[k-1]*self.get_transition_matrix_n_steps(n1-k)[i,j] for k in range(1,n1)]))
-        print(f)
         return f[-1]
 
     def get_steady_state(self): 
@@ -95,6 +93,7 @@ class MarkovChain():
             # Repeat until we reach state j
             while state != j or steps == 0:
                 # Take a step
+
                 state = np.random.choice(range(self.MC.shape[0]), p=self.MC[state])
                 # Increase the number of steps
                 steps += 1
@@ -127,8 +126,6 @@ class MarkovChain():
     def check_ergodicity(self):
         # Find Pt-I and check if it is ergodic
         A = np.transpose(self.MC) - np.eye(self.MC.shape[0])
-        print(A)
-        print(np.linalg.matrix_rank(A))
         if np.linalg.matrix_rank(A) == self.MC.shape[0]:
             print("Ergodic")
         else:
@@ -151,3 +148,25 @@ class MarkovChain():
     
     
 
+    def estimate_probability_first_time_passage_n_steps(self, i, j,n, n_steps=100000):
+        # Simulate the Markov Chain
+        steps_to_j = []
+        for _ in range(n_steps):
+            # Start in state i
+            state = i
+            # Count the number of steps
+            steps = 0
+            # Repeat until we reach state j
+            while state != j or steps == 0:
+                # Take a step
+                state = np.random.choice(range(self.MC.shape[0]), p=self.MC[state])
+                # Increase the number of steps
+                steps += 1
+            # Add the number of steps to the list
+            if steps == n:
+
+                steps_to_j.append(1)
+            else:
+                steps_to_j.append(0)
+        # Find the probability of going from state i to state j in n steps
+        return np.mean(steps_to_j) 
