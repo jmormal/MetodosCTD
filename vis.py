@@ -83,7 +83,7 @@ def update_matrix_input(change):
     global matrix_input
     matrix_input = create_matrix_input(n)
     # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, output]
-    matrix_widget.children = [box_0,states_input, matrix_input, output]
+    matrix_widget.children = base_boxes +[output]
 
 
 
@@ -112,9 +112,59 @@ solve_matrix_power_button = widgets.Button(description="Solve", layout=widgets.L
 
 # Output widget
 output = widgets.Output()
+def on_calc_matrix_power_button_clicked(b):
 
+
+    global matrix_input
+
+
+    # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, draw_prob_button, i_input, j_input, n_input,solve_prob_button, output]
+
+    matrix_widget.children= base_boxes +[ n_input,solve_matrix_power_button, output]
+
+calc_matrix_power_button.on_click(on_calc_matrix_power_button_clicked)
+
+def on_solve_matrix_power_button_clicked(b):
+    try:
+        with output:
+            clear_output()
+            matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
+            state_names = [child.value for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+            # get unique state names
+            state_names =  state_names[:len(state_names)//2]
+            n = len(state_names)
+            transition_matrix = np.array(matrix_values).reshape(n, n)
+            M = MarkovChain(transition_matrix, state_names)
+            # Get the index of the state names
+            Mn=M.get_transition_matrix_n_steps(n_input.value)
+            # turn to the dataframe
+            df = pd.DataFrame(Mn, columns=state_names, index=state_names)
+            display(df)
+    except Exception as e:
+        print(f"Error: {e}")
+
+solve_matrix_power_button.on_click(on_solve_matrix_power_button_clicked)
 
 # Functions to handle the button click events
+def on_classify_button_clicked(b):
+    with output:
+        clear_output()
+        n = states_input.value
+        matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
+        state_names = [child.value for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+        state_names =  state_names[:len(state_names)//2]
+        transition_matrix = np.array(matrix_values).reshape(n, n)
+        try:
+            M = MarkovChain(transition_matrix, state_names)
+            display( f"The Markov chain is {M.check_reducibility()}")
+        except Exception as e:
+            display(f"Error: {e}")
+
+classify_button.on_click(on_classify_button_clicked)
+
+# Function to handle the button click event for drawing the graph
+
+
 
 # Function to handle the button click event
 def on_calc_button_clicked(b):
@@ -129,7 +179,9 @@ def on_calc_button_clicked(b):
         try:
             M = MarkovChain(transition_matrix, state_names)
             sol = M.get_steady_state()
-            display(f"Steady States: {sol}")
+            for i in range(len(sol)):
+                # use a precision of 3 decimal places
+                display(f"The steady state probability of {state_names[i]} is {sol[i]:.3f}")
             return sol
         except Exception as e:
             display(f"Error: {e}") 
@@ -191,7 +243,7 @@ def on_draw_prob_button_clicked(b):
 
     # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, draw_prob_button, i_input, j_input, n_input,solve_prob_button, output]
 
-    matrix_widget.children= [box_0, box_1, matrix_input, i_input, j_input, n_input,solve_prob_button, output]
+    matrix_widget.children= base_boxes +[i_input, j_input, n_input,solve_prob_button, output]
 
 
 
@@ -206,9 +258,6 @@ def solve_prob_button_clicked(b):
             n = len(state_names)
             transition_matrix = np.array(matrix_values).reshape(n, n)
             M = MarkovChain(transition_matrix, state_names)
-            display(i_input.value)
-            display(j_input.value)
-            display(n_input.value)
             # Get the index of the state names
             i = state_names.index(i_input.value)
             j = state_names.index(j_input.value)
@@ -251,7 +300,7 @@ for item in items_0:
     item.layout.flex_flow = 'row'
     item.layout.flex_wrap = 'wrap'
     
-items_calc = [calc_button,draw_button,  draw_prob_button, calc_first_time_mean_button , calc_matrix_power_button]
+items_calc = [calc_button,  draw_prob_button, calc_first_time_mean_button , calc_matrix_power_button]
 
 for item in items_calc:
     item.style.button_color = 'lightblue'
@@ -343,7 +392,6 @@ def on_calc_first_time_mean_button_clicked(b):
 
             n = len(state_names)
             transition_matrix = np.array(matrix_values).reshape(n, n)
-            print(transition_matrix)
             M = MarkovChain(transition_matrix, state_names)
 
             
@@ -368,7 +416,9 @@ def solve_estimate_and_draw_first_time_prob_button_clicked(b):
             # Get the index of the state names
             i = state_names.index(i_input.value)
             j = state_names.index(j_input.value)
-            M.estimate_probability_first_time_passage_n_steps(i,j,n_input.value)
+            display(M.draw_probability_distribution_first_time_n_simulation(i,j,n_input.value))
+            display("The graph is drawn below: ")
+
     except Exception as e:
         print(f"Error: {e}")
 
@@ -388,7 +438,7 @@ def on_estimate_and_draw_first_time_prob_button_clicked(b):
 
     # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, draw_prob_button, i_input, j_input, n_input,solve_prob_button, output]
 
-    matrix_widget.children= [box_0, box_1, matrix_input, i_input, j_input, n_input, solve_estimate_and_draw_button, output]
+    matrix_widget.children= base_boxes +[i_input, j_input, n_input, solve_estimate_and_draw_button, output]
 
 
 # Function to handle the button click event for solving estimated probabilities
@@ -402,7 +452,6 @@ def on_solve_estimated_prob_button_clicked(b):
             state_names =  state_names[:len(state_names)//2]
             n = len(state_names)
             transition_matrix = np.array(matrix_values).reshape(n, n)
-            print(transition_matrix)
             M = MarkovChain(transition_matrix, state_names)
             # Get the index of the state names
             i = state_names.index(i_input.value)
@@ -413,6 +462,14 @@ def on_solve_estimated_prob_button_clicked(b):
         print(f"Error: {e}")
         
 
+# Create button to save output
+save_button = widgets.Button(description="Save Output", layout=widgets.Layout(flex='1 1 0%', width='auto'),)
+import subprocess
+# Function to handle the button click event
+def on_save_button_clicked(b):
+    # save the output to a pdf file
+    print(display.__dict__)
+save_button.on_click(on_save_button_clicked)
 
 
 calc_button.on_click(on_calc_button_clicked)
@@ -425,5 +482,6 @@ calc_first_time_mean_button.on_click(on_calc_first_time_mean_button_clicked)
 estimate_and_draw_first_time_prob_button.on_click(on_estimate_and_draw_first_time_prob_button_clicked)
 solve_estimated_prob_button.on_click(on_solve_estimated_prob_button_clicked)
 # Layout the widgets
-matrix_widget = widgets.VBox([box_2, box_calc, box_estimate,  box_1, matrix_input,   output])
+base_boxes=[box_2, box_calc, box_estimate,  box_1, matrix_input]
+matrix_widget = widgets.VBox(base_boxes +[output])
 display(matrix_widget)

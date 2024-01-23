@@ -23,10 +23,17 @@ class MarkovChain():
     def check_reducibility(self):
         # Find Pt-I and check if it is irreducible
         A = np.transpose(self.MC) - np.eye(self.MC.shape[0])
-        if np.linalg.matrix_rank(A) == self.MC.shape[0]:
-            print("Irreducible")
+        v=self.get_steady_state()
+        # check if 0 is in the steady state with some tolerance
+        bool1 = False
+        for i in range(len(v)):
+            if v[i] < 0.0001 and v[i] > -0.0001:
+                bool1 = True
+        if bool1:
+            return "Reducible"
         else:
-            print("Reducible")
+ 
+            return "Irreducible"
 
 
 
@@ -119,6 +126,12 @@ class MarkovChain():
 
         plt.plot(x,y)
         plt.plot(x,[real]*len(x))
+        plt.xlabel("Number of simulations")
+        plt.ylabel("Mean of first passage time")
+        # y axis is from 0 to 1.1 max y
+        plt.ylim(0,1.1*max(y))
+        
+
         plt.show()
 
 
