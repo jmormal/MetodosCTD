@@ -133,6 +133,7 @@ class MarkovChain():
         
 
         plt.show()
+        return y[-1]
 
 
 

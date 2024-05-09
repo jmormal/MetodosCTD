@@ -8,11 +8,11 @@ class MarkovChainVisualizer:
     def __init__(self):
         self.setup_widgets()
         self.setup_event_handlers()
-        self.setup_layout()
+        # self.setup_layout()
         self.create_matrix_input(2)
         self.states_input.observe(self.update_matrix_input, names='value')
-        matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
-        state_names = [child.value for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+        matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
+        state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
         # get unique state names
         state_names =  state_names[:len(state_names)//2]
 
@@ -64,7 +64,7 @@ class MarkovChainVisualizer:
             item.layout.flex_flow = 'row'
             item.layout.flex_wrap = 'wrap'
             
-        self.items_calc = [self.calc_button, self.draw_prob_button, self.calc_first_time_mean_button, self.calc_matrix_power_button]
+        self.items_calc = [self.calc_button,  self.calc_first_time_mean_button, self.calc_matrix_power_button]
         for item in self.items_calc:
             item.style.button_color = 'lightblue'
             item.style.font_weight = 'bold'
@@ -86,10 +86,10 @@ class MarkovChainVisualizer:
             item.layout.flex_wrap = 'wrap'
             
 
-        self.box_calc = widgets.Box(children=items_calc, layout=box_layout)
+        self.box_calc = widgets.Box(children=self.items_calc, layout=self.box_layout)
 
 
-        self.items_estimate = [self.estimate_and_draw_first_time_prob_button , self.solve_estimated_prob_button]
+        self.items_estimate = [self.estimate_and_draw_first_time_prob_button , self.draw_prob_button,]
 
         for item in self.items_estimate:
             item.style.button_color = 'lightblue'
@@ -111,7 +111,7 @@ class MarkovChainVisualizer:
             item.layout.flex_flow = 'row'
             item.layout.flex_wrap = 'wrap'
 
-        box_estimate = widgets.Box(children=items_estimate, layout=box_layout)
+        self.box_estimate = widgets.Box(children=self.items_estimate, layout=self.box_layout)
 
         self.items_2 = [self.classify_button, self.draw_button]
 
@@ -136,12 +136,12 @@ class MarkovChainVisualizer:
             item.layout.flex_flow = 'row'
             item.layout.flex_wrap = 'wrap'
 
-        self.box_2 = widgets.Box(children=items_2, layout=box_layout)
+        self.box_2 = widgets.Box(children=self.items_2, layout=self.box_layout)
 
-        self.box_0 = widgets.Box(children=items_0, layout=box_layout)
+        self.box_0 = widgets.Box(children=self.items_0, layout=self.box_layout)
 
-        items_1=[states_input, update_states_name_button,set_matrix_to_zero_button]
-        self.box_1 = widgets.Box(children=items_1, layout=box_layout)
+        self.items_1=[self.states_input, self.update_states_name_button,self.set_matrix_to_zero_button]
+        self.box_1 = widgets.Box(children=self.items_1, layout=self.box_layout)
         self.base_boxes=[self.box_2, self.box_calc, self.box_estimate,  self.box_1, self.matrix_input]
         self.matrix_widget = widgets.VBox(self.base_boxes +[self.output])
     def setup_widgets(self):
@@ -183,7 +183,7 @@ class MarkovChainVisualizer:
         self.classify_button.on_click(self.on_classify_button_clicked)
 
         #
-        self.save_button.on_click(self.on_save_button_clicked)
+        # self.save_button.on_click(self.on_save_button_clicked)
 
 
         self.calc_button.on_click(self.on_calc_button_clicked)
@@ -200,13 +200,13 @@ class MarkovChainVisualizer:
 # Function to handle the button click event
     def on_update_states_name_button_clicked(self,b):
 
-        self.matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
-        self.state_names = [child for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+        matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
+        state_names = [child for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
         # get unique state names
-        state_names1 =  self.state_names[:len(state_names)//2]
+        state_names1 =  state_names[:len(state_names)//2]
         # chage rest of the state names
         for i in range(len(state_names1)):
-            self.state_names[i + len(state_names1)].value = state_names[i].value 
+            state_names[i + len(state_names1)].value = state_names[i].value 
 
     def on_set_matrix_to_zero_button_clicked(self,b):
 
@@ -250,7 +250,7 @@ class MarkovChainVisualizer:
 
 
     
-    def on_solve_matrix_power_button_clicked(slef,b):
+    def on_solve_matrix_power_button_clicked(self,b):
         try:
             with self.output:
                 clear_output()
@@ -262,9 +262,10 @@ class MarkovChainVisualizer:
                 transition_matrix = np.array(matrix_values).reshape(n, n)
                 M = MarkovChain(transition_matrix, state_names)
                 # Get the index of the state names
-                Mn=M.get_transition_matrix_n_steps(n_input.value)
+                Mn=M.get_transition_matrix_n_steps(self.n_input.value)
                 # turn to the dataframe
                 df = pd.DataFrame(Mn, columns=state_names, index=state_names)
+                display("The transition probability matrix for n steps is")
                 display(df)
         except Exception as e:
             print(f"Error: {e}")
@@ -272,7 +273,7 @@ class MarkovChainVisualizer:
     def on_classify_button_clicked(self,b):
         with self.output:
             clear_output()
-            n = states_input.value
+            n = self.states_input.value
             matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
             state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
             state_names =  state_names[:len(state_names)//2]
@@ -286,7 +287,7 @@ class MarkovChainVisualizer:
     def on_calc_button_clicked(self,b):
         with self.output:
             clear_output()
-            n = states_input.value
+            n = self.states_input.value
             matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
             state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
             state_names =  state_names[:len(state_names)//2]
@@ -299,8 +300,8 @@ class MarkovChainVisualizer:
                     # use a precision of 3 decimal places
                     display(f"The steady state probability of {state_names[i]} is {sol[i]:.3f}")
                 return sol
-            except Exception as e:
-                display(f"Error: {e}") 
+            except:
+                display("The matrix is not reducable") 
     
     def on_draw_button_clicked(self,b):
         with self.output:
@@ -322,7 +323,7 @@ class MarkovChainVisualizer:
 
 
     def on_draw_prob_button_clicked(self,b):
-        n = states_input.value
+        n = self.states_input.value
 
         matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
         state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
@@ -355,18 +356,18 @@ class MarkovChainVisualizer:
                 i = state_names.index(self.i_input.value)
                 j = state_names.index(self.j_input.value)
                 # display(M.get_probability_first_time_passage_n_steps(n_input.value,i,j))
-                display(f"The probability of going from state {i_input.value} to state {j_input.value} in {n_input.value} steps is {M.get_probability_first_time_passage_n_steps(n_input.value,i,j)}")
+                display(f"The probability of going from state {self.i_input.value} to state {self.j_input.value} in {self.n_input.value} steps is {M.get_probability_first_time_passage_n_steps(self.n_input.value,i,j)}")
         except Exception as e:
             print(f"Error: {e}")
 
     # Todo 
     # Function to handle the button click event for calculating first time probabilities
-    def on_calc_first_time_mean_button_clicked(b):
+    def on_calc_first_time_mean_button_clicked(self, b):
         try:
-            with output:
+            with self.output:
                 clear_output()
-                matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
-                state_names = [child.value for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+                matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
+                state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
                 # get unique state names    
                 state_names =  state_names[:len(state_names)//2]
 
@@ -376,55 +377,57 @@ class MarkovChainVisualizer:
 
                 
                 df = pd.DataFrame(M.get_estimated_first_passage_times(), columns=state_names, index=state_names)
+                display("The mean first time matrix is:")
                 display(df)
                 
-        except Exception as e:
-            print(f"Error: {e}")
+        except:
+            display("The matrix is not reducable") 
+    
 
     # Function to handle the button click event for estimating and drawing first time probabilities
-    def solve_estimate_and_draw_first_time_prob_button_clicked(b):
+    def solve_estimate_and_draw_first_time_prob_button_clicked(self,b):
         try:
-            with output:
+            with self.output:
                 clear_output()
-                matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
-                state_names = [child.value for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+                matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
+                state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
                 # get unique state names
                 state_names =  state_names[:len(state_names)//2]
                 n = len(state_names)
                 transition_matrix = np.array(matrix_values).reshape(n, n)
                 M = MarkovChain(transition_matrix, state_names)
                 # Get the index of the state names
-                i = state_names.index(i_input.value)
-                j = state_names.index(j_input.value)
-                display(M.draw_probability_distribution_first_time_n_simulation(i,j,n_input.value))
-                display("The graph is drawn below: ")
+                i = state_names.index(self.i_input.value)
+                j = state_names.index(self.j_input.value)
 
+                a = M.draw_probability_distribution_first_time_n_simulation(i,j,self.n_input.value)
+                display(f"The estimated probability is {a}")
         except Exception as e:
             print(f"Error: {e}")
 
-    def on_estimate_and_draw_first_time_prob_button_clicked(b):
-        n = states_input.value
+    def on_estimate_and_draw_first_time_prob_button_clicked(self,b):
+        n = self.states_input.value
         global matrix_input
 
-        matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
-        state_names = [child.value for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+        matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
+        state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
         # get unique state names
         state_names =  state_names[:len(state_names)//2]
         transition_matrix = np.array(matrix_values).reshape(n, n)
         # set i_input and j_input options
-        i_input.options = state_names
-        j_input.options = state_names
+        self.i_input.options = state_names
+        self.j_input.options = state_names
 
 
         # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, draw_prob_button, i_input, j_input, n_input,solve_prob_button, output]
 
-        matrix_widget.children= base_boxes +[i_input, j_input, n_input, solve_estimate_and_draw_button, output]
+        self.matrix_widget.children= self.base_boxes +[self.i_input, self.j_input, self.n_input, self.solve_estimate_and_draw_button, self.output]
 
 
     # Function to handle the button click event for solving estimated probabilities
-    def on_solve_estimated_prob_button_clicked(b):
+    def on_solve_estimated_prob_button_clicked(self, b):
         try:
-            with output:
+            with self.output:
                 clear_output()
                 matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
                 state_names = [child.value for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
@@ -434,10 +437,10 @@ class MarkovChainVisualizer:
                 transition_matrix = np.array(matrix_values).reshape(n, n)
                 M = MarkovChain(transition_matrix, state_names)
                 # Get the index of the state names
-                i = state_names.index(i_input.value)
+                i = state_names.index(self.i_input.value)
                 
-                j = state_names.index(j_input.value)
-                display(M.estimate_probability_first_time_passage_n_steps(n_input.value,i,j))
+                j = state_names.index(self.j_input.value)
+                display(M.estimate_probability_first_time_passage_n_steps(slef.n_input.value,i,j))
         except Exception as e:
             print(f"Error: {e}")
             
