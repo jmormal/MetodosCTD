@@ -243,6 +243,7 @@ class MarkovChainVisualizer:
         n = change['new']
         self.create_matrix_input(n)
         # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, output]
+        self.base_boxes=[self.box_2, self.box_calc, self.box_estimate,  self.box_1, self.matrix_input]
         self.matrix_widget.children = self.base_boxes +[self.output]
 
     def on_calc_matrix_power_button_clicked(self, b):
@@ -280,12 +281,22 @@ class MarkovChainVisualizer:
             transition_matrix = np.array(matrix_values).reshape(n, n)
             try:
                 M = MarkovChain(transition_matrix, state_names)
+                if M.check_if_probabilities():
+                    pass
+                else:
+                    display("Error: Not a valid transition matrix")
+                    return 0
+            except:
+                pass
+            try:
+                M = MarkovChain(transition_matrix, state_names)
                 display( f"The Markov chain is {M.check_reducibility()}")
             except Exception as e:
                 display(f"Error: {e}")
     
     def on_calc_button_clicked(self,b):
         with self.output:
+            
             clear_output()
             n = self.states_input.value
             matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
@@ -293,6 +304,16 @@ class MarkovChainVisualizer:
             state_names =  state_names[:len(state_names)//2]
 
             transition_matrix = np.array(matrix_values).reshape(n, n)
+            try:
+                M = MarkovChain(transition_matrix, state_names)
+                if M.check_if_probabilities():
+                    pass
+                else:
+                    display("Error: Not a valid transition matrix")
+                    return 0
+            except:
+                pass
+
             try:
                 M = MarkovChain(transition_matrix, state_names)
                 sol = M.get_steady_state()
@@ -351,6 +372,15 @@ class MarkovChainVisualizer:
                 state_names =  state_names[:len(state_names)//2]
                 n = len(state_names)
                 transition_matrix = np.array(matrix_values).reshape(n, n)
+                try:
+                    M = MarkovChain(transition_matrix, state_names)
+                    if M.check_if_probabilities():
+                        pass
+                    else:
+                        display("Error: Not a valid transition matrix")
+                        return 0
+                except:
+                    pass                
                 M = MarkovChain(transition_matrix, state_names)
                 # Get the index of the state names
                 i = state_names.index(self.i_input.value)
@@ -373,6 +403,16 @@ class MarkovChainVisualizer:
 
                 n = len(state_names)
                 transition_matrix = np.array(matrix_values).reshape(n, n)
+                try:
+                    M = MarkovChain(transition_matrix, state_names)
+                    if M.check_if_probabilities():
+                        pass
+                    else:
+                        display("Error: Not a valid transition matrix")
+                        return 0
+                except:
+                    pass                
+
                 M = MarkovChain(transition_matrix, state_names)
 
                 
@@ -395,6 +435,16 @@ class MarkovChainVisualizer:
                 state_names =  state_names[:len(state_names)//2]
                 n = len(state_names)
                 transition_matrix = np.array(matrix_values).reshape(n, n)
+                try:
+                    M = MarkovChain(transition_matrix, state_names)
+                    if M.check_if_probabilities():
+                        pass
+                    else:
+                        display("Error: Not a valid transition matrix")
+                        return 0
+                except:
+                    pass
+
                 M = MarkovChain(transition_matrix, state_names)
                 # Get the index of the state names
                 i = state_names.index(self.i_input.value)
@@ -406,23 +456,35 @@ class MarkovChainVisualizer:
             print(f"Error: {e}")
 
     def on_estimate_and_draw_first_time_prob_button_clicked(self,b):
-        n = self.states_input.value
-        global matrix_input
+        try:
+            with self.output:
+                n = self.states_input.value
+                global matrix_input
 
-        matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
-        state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
-        # get unique state names
-        state_names =  state_names[:len(state_names)//2]
-        transition_matrix = np.array(matrix_values).reshape(n, n)
-        # set i_input and j_input options
-        self.i_input.options = state_names
-        self.j_input.options = state_names
+                matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
+                state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
+                # get unique state names
+                state_names =  state_names[:len(state_names)//2]
+                transition_matrix = np.array(matrix_values).reshape(n, n)
+                try:
+                    M = MarkovChain(transition_matrix, state_names)
+                    if M.check_if_probabilities():
+                        pass
+                    else:
+                        display("Error: Not a valid transition matrix")
+                        return 0
+                except:
+                    pass
+                # set i_input and j_input options
+                self.i_input.options = state_names
+                self.j_input.options = state_names
 
 
-        # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, draw_prob_button, i_input, j_input, n_input,solve_prob_button, output]
+                # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, draw_prob_button, i_input, j_input, n_input,solve_prob_button, output]
 
-        self.matrix_widget.children= self.base_boxes +[self.i_input, self.j_input, self.n_input, self.solve_estimate_and_draw_button, self.output]
-
+                self.matrix_widget.children= self.base_boxes +[self.i_input, self.j_input, self.n_input, self.solve_estimate_and_draw_button, self.output]
+        except Exception as e:
+            print(f"Error: {e}")
 
     # Function to handle the button click event for solving estimated probabilities
     def on_solve_estimated_prob_button_clicked(self, b):
