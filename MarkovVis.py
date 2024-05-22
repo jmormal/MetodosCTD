@@ -417,7 +417,7 @@ class MarkovChainVisualizer:
 
                 
                 df = pd.DataFrame(M.get_estimated_first_passage_times(), columns=state_names, index=state_names)
-                display("The mean first time matrix is:")
+                display("The mean first-passage time matrix is:")
                 display(df)
                 
         except:
@@ -451,7 +451,7 @@ class MarkovChainVisualizer:
                 j = state_names.index(self.j_input.value)
 
                 a = M.draw_probability_distribution_first_time_n_simulation(i,j,self.n_input.value)
-                display(f"The estimated probability is {a}")
+                display(f"The estimated mean first-passage time {a}")
         except Exception as e:
             print(f"Error: {e}")
 
