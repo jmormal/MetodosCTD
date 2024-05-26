@@ -386,7 +386,7 @@ class MarkovChainVisualizer:
                 i = state_names.index(self.i_input.value)
                 j = state_names.index(self.j_input.value)
                 # display(M.get_probability_first_time_passage_n_steps(n_input.value,i,j))
-                display(f"The probability of going from state {self.i_input.value} to state {self.j_input.value} in {self.n_input.value} steps is {M.get_probability_first_time_passage_n_steps(self.n_input.value,i,j)}")
+                display(f"The probability of first-time passage from state {self.i_input.value} to state {self.j_input.value} in {self.n_input.value} steps is {M.get_probability_first_time_passage_n_steps(self.n_input.value,i,j)}")
         except Exception as e:
             print(f"Error: {e}")
 
