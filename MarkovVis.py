@@ -244,8 +244,6 @@ class MarkovChainVisualizer:
             )
         )
     def update_matrix_input(self,change):
-        with self.output:
-            clear_output()
         n = change['new']
         self.create_matrix_input(n)
         # matrix_widget.children = [states_input, matrix_input, calc_button, draw_button, output]
@@ -260,7 +258,6 @@ class MarkovChainVisualizer:
     def on_solve_matrix_power_button_clicked(self,b):
         try:
             with self.output:
-                clear_output()
                 matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
                 state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
                 # get unique state names
@@ -279,7 +276,6 @@ class MarkovChainVisualizer:
 
     def on_classify_button_clicked(self,b):
         with self.output:
-            clear_output()
             n = self.states_input.value
             matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
             state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
@@ -303,7 +299,6 @@ class MarkovChainVisualizer:
     def on_calc_button_clicked(self,b):
         with self.output:
             
-            clear_output()
             n = self.states_input.value
             matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
             state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
@@ -332,7 +327,6 @@ class MarkovChainVisualizer:
     
     def on_draw_button_clicked(self,b):
         with self.output:
-            clear_output()
             n = self.states_input.value
             matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
             state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
@@ -401,7 +395,6 @@ class MarkovChainVisualizer:
     def on_calc_first_time_mean_button_clicked(self, b):
         try:
             with self.output:
-                clear_output()
                 matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
                 state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
                 # get unique state names    
@@ -434,7 +427,6 @@ class MarkovChainVisualizer:
     def solve_estimate_and_draw_first_time_prob_button_clicked(self,b):
         try:
             with self.output:
-                clear_output()
                 matrix_values = [child.value for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
                 state_names = [child.value for child in self.matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
                 # get unique state names
@@ -496,7 +488,6 @@ class MarkovChainVisualizer:
     def on_solve_estimated_prob_button_clicked(self, b):
         try:
             with self.output:
-                clear_output()
                 matrix_values = [child.value for child in matrix_input.children if isinstance(child, widgets.FloatText)]
                 state_names = [child.value for child in matrix_input.children if isinstance(child, widgets.Text) and child.value != '']
                 # get unique state names
