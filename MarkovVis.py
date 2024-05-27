@@ -269,7 +269,7 @@ class MarkovChainVisualizer:
                 Mn=M.get_transition_matrix_n_steps(self.n_input.value)
                 # turn to the dataframe
                 df = pd.DataFrame(Mn, columns=state_names, index=state_names)
-                display(f"The transition probability matrix for {n} steps is")
+                display(f"The transition probability matrix for {self.n_input.value} steps is")
                 display(df)
         except Exception as e:
             print(f"Error: {e}")
