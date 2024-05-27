@@ -140,7 +140,7 @@ class MarkovChainVisualizer:
 
         self.box_0 = widgets.Box(children=self.items_0, layout=self.box_layout)
 
-        self.items_1=[self.states_input, self.update_states_name_button,self.set_matrix_to_zero_button]
+        self.items_1=[self.states_input, self.update_states_name_button,self.set_matrix_to_zero_button, self.clear_screen]
         self.box_1 = widgets.Box(children=self.items_1, layout=self.box_layout)
         self.base_boxes=[self.box_2, self.box_calc, self.box_estimate,  self.box_1, self.matrix_input]
         self.matrix_widget = widgets.VBox(self.base_boxes +[self.output])
@@ -153,6 +153,7 @@ class MarkovChainVisualizer:
         
         self.update_states_name_button = widgets.Button(description="Update State Names")
         self.set_matrix_to_zero_button = widgets.Button(description="Set Matrix to 0")
+        self.clear_screen = widgets.Button(description="Clear Screen")
 
 
         # Create other necessary widgets like Dropdowns, IntText, etc.
@@ -178,6 +179,7 @@ class MarkovChainVisualizer:
     def setup_event_handlers(self):
         self.update_states_name_button.on_click(self.on_update_states_name_button_clicked)
         self.set_matrix_to_zero_button.on_click(self.on_set_matrix_to_zero_button_clicked)
+        self.clear_screen.on_click(self.on_clear_screen_button_clicked)
         self.calc_matrix_power_button.on_click(self.on_calc_matrix_power_button_clicked)
         self.solve_matrix_power_button.on_click(self.on_solve_matrix_power_button_clicked)
         self.classify_button.on_click(self.on_classify_button_clicked)
@@ -213,7 +215,11 @@ class MarkovChainVisualizer:
         matrix_values = [child for child in self.matrix_input.children if isinstance(child, widgets.FloatText)]
         for i in range(len(matrix_values)):
             matrix_values[i].value = 0
-        
+    
+    def on_clear_screen_button_clicked(self,b):
+        with self.output:
+            clear_output()
+
     def display(self):
         # Display the entire widget
         display(self.matrix_widget)
