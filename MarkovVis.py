@@ -160,10 +160,10 @@ class MarkovChainVisualizer:
         self.calc_button = widgets.Button(description="Calculate Steady States Probabilities", layout=widgets.Layout(flex='1 1 0%', width='auto'),)
         self.draw_button = widgets.Button(description="Draw Graph", layout=widgets.Layout(flex='1 1 0%', width='auto'))
         self.draw_prob_button = widgets.Button(description="Probability first-passage time from state i to state j ", layout=widgets.Layout(flex='1 1 0%', width='auto'))
-        self.calc_first_time_mean_button = widgets.Button(description="Estimated first time passage", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+        self.calc_first_time_mean_button = widgets.Button(description="Calculate expected first-passage time passage", layout=widgets.Layout(flex='1 1 0%', width='auto'))
         self.estimate_and_draw_first_time_prob_button = widgets.Button(description="Estimate and draw  first time probabilities", layout=widgets.Layout(flex='1 1 0%', width='auto'))
         self.estimate_and_draw_first_time_mean_button = widgets.Button(description="Estimate and draw  first time mean", layout=widgets.Layout(flex='1 1 0%', width='auto'))
-        self.calc_matrix_power_button = widgets.Button(description="Calculate Matrix Power", layout=widgets.Layout(flex='1 1 0%', width='auto'))
+        self.calc_matrix_power_button = widgets.Button(description="Calculate n-step transition matrix", layout=widgets.Layout(flex='1 1 0%', width='auto'))
         self.classify_button = widgets.Button(description="Classify the Markov Chain", layout=widgets.Layout(flex='1 1 0%', width='auto'))
 
         # Button to find the probability of going from state i to state j in n steps 
@@ -269,7 +269,7 @@ class MarkovChainVisualizer:
                 Mn=M.get_transition_matrix_n_steps(self.n_input.value)
                 # turn to the dataframe
                 df = pd.DataFrame(Mn, columns=state_names, index=state_names)
-                display("The transition probability matrix for n steps is")
+                display(f"The transition probability matrix for {n} steps is")
                 display(df)
         except Exception as e:
             print(f"Error: {e}")
